@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossword Puzzle</title>
+    <style>
+		:root {
+			--columns: 20;
+			--rows: 20;
+			--cell-size: 25px;
+		}
+		.crossword-container {
+			background-color: #1ECBE1;
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			align-items: center;
+			justify-content: space-evenly;
+		}
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(var(--columns), var(--cell-size)); /* Adjust size based on the grid dimensions */
+            #grid-gap: 1px;
+            margin: 10px 0px;
+			width: auto;
+			#background-color: #2F747D;
+			background-color: #19708C;
+        }
+        .crossword-cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+			border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+		.empty-cell {
+			background-color: #19708C;
+		}
+        .crossword-cell input {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            border: 1px solid #2F747D;
+			border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .clue-list {
+            margin-top: 20px;
+			width: 50%;
+        }
+		input:focus::placeholder {
+			color: transparent;
+		}
+    </style>
+</head>
+<body>
+	<div class="crossword-container">
+		<div id="crossword" class="crossword-grid"></div>
+		<div id="clues" class="clue-list"></div>
+	</div>
+
+    <script>
+        const clues = [
+		{"clue": "What time did the man go to the dentist? ___________", "answer": "TOOTHHURTY", "start": [28, 12], "end": [28, 21]}, 
+		{"clue": "I'm reading a book about anti-gravity. It's impossible to _______", "answer": "PUTDOWN", "start": [23, 0], "end": [23, 6]}, 
+		{"clue": "How does a Jewish person make tea? _______ it", "answer": "HEBREWS", "start": [10, 11], "end": [16, 11]}, 
+		{"clue": "What kind of doctor is Dr. Pepper? He's a _________", "answer": "FIZZICIAN", "start": [15, 6], "end": [23, 6]}, 
+		{"clue": "What's the difference between a hot potato and a flying pig? One's a heated yam, the other's a _________", "answer": "YEETEDHAM", "start": [11, 22], "end": [11, 30]}, 
+		{"clue": "Two peanuts were walking. One was _______", "answer": "ASALTED", "start": [8, 4], "end": [8, 10]}, 
+		{"clue": "What do you call a witch at the beach? A ________", "answer": "SANDWICH", "start": [14, 14], "end": [21, 14]}, 
+		{"clue": "Why was the river rich? Because it had two _____", "answer": "BANKS", "start": [19, 0], "end": [19, 4]}, 
+		{"clue": "To whoever stole my copy of Microsoft Office, I will find you. You have my ____", "answer": "WORD", "start": [11, 16], "end": [14, 16]}, 
+		{"clue": "Why did the koala get rejected? Because he did not have any ______________", "answer": "KOALAFICATIONS", "start": [1, 4], "end": [1, 17]}, 
+		{"clue": "____________ cat walks into a bar and doesn't", "answer": "SCHRODINGERS", "start": [6, 13], "end": [6, 24]}, 
+		{"clue": "The past, the present and the future walk into a bar. It was _____", "answer": "TENSE", "start": [4, 29], "end": [8, 29]}, 
+		{"clue": "What did the cell say when his sister cell stepped on his foot? _______", "answer": "MITOSIS", "start": [16, 5], "end": [16, 11]}, 
+		{"clue": "How do you make holy water? You boil the ____ out of it", "answer": "HELL", "start": [11, 5], "end": [14, 5]}, 
+		{"clue": "What did the fish say when it swam into the wall? ___", "answer": "DAM", "start": [7, 4], "end": [9, 4]}, 
+		{"clue": "What do you call a deer with no eyes? _________", "answer": "NOEYEDEER", "start": [6, 27], "end": [14, 27]}, 
+		{"clue": "Where do sick cruise ships go to get healthy? The ____", "answer": "DOCK", "start": [12, 15], "end": [12, 18]}, 
+		{"clue": "How do construction workers party? They raise the ____", "answer": "ROOF", "start": [0, 5], "end": [3, 5]}, 
+		{"clue": "I was struggling to figure out how lightning works, but then it ______ me", "answer": "STRUCK", "start": [20, 10], "end": [20, 15]}, 
+		{"clue": "Why was the mushroom always invited to parties? Cause he's a _____", "answer": "FUNGI", "start": [2, 19], "end": [6, 19]}, 
+		{"clue": "How much did your chimney cost? Nothing, it was __________", "answer": "ONTHEHOUSE", "start": [1, 15], "end": [10, 15]}, 
+		{"clue": "What kind of motorbike does Santa ride? A _____________", "answer": "HOLLYDAVIDSON", "start": [15, 8], "end": [27, 8]}, 
+		{"clue": "Who is Santa's favourite singer? ____________", "answer": "ELFISPRESLEY", "start": [11, 23], "end": [22, 23]}, 
+		{"clue": "Why are cats so good at video games? They have _________", "answer": "NINELIVES", "start": [30, 7], "end": [30, 15]}, 
+		{"clue": "Why did the banana go see a doctor? Because it wasn't _______ well", "answer": "PEELING", "start": [8, 2], "end": [14, 2]}, 
+		{"clue": "What's the difference between a poorly dressed man on a unicycle and a well dressed man on a bicycle? ______", "answer": "ATTIRE", "start": [27, 12], "end": [32, 12]}, 
+		{"clue": "You see, mountains aren't just funny. They are _________", "answer": "HILLAREAS", "start": [11, 5], "end": [11, 13]}, 
+		{"clue": "Never date a baker. They're too ______", "answer": "KNEADY", "start": [19, 3], "end": [24, 3]}, 
+		{"clue": "What does the mermaid wear to math class? ________", "answer": "ALGAEBRA", "start": [4, 9], "end": [11, 9]}, 
+		{"clue": "Did you hear about the claustrophobic astronaut? He just needed a little _____", "answer": "SPACE", "start": [26, 10], "end": [30, 10]}, 
+		{"clue": "I just saw my wife trip over and drop a basket full of ironed clothes. I watched it all ______", "answer": "UNFOLD", "start": [13, 1], "end": [13, 6]}, 
+		{"clue": "Which part of the hospital has the least privacy? The ___", "answer": "ICU", "start": [8, 13], "end": [8, 15]}, 
+		{"clue": "I stayed up all night wondering where the sun went. Then it ______ on me", "answer": "DAWNED", "start": [24, 8], "end": [24, 13]}, 
+		{"clue": "Why do ghosts go on diets? So they can keep their ________ figures.", "answer": "GHOULISH", "start": [5, 5], "end": [5, 12]}, 
+		{"clue": "What's it like to be kissed by a vampire? It's a _____________", "answer": "PAININTHENECK", "start": [8, 19], "end": [8, 31]}, 
+		{"clue": "Why did the ghost go inside the bar? For the ____", "answer": "BOOS", "start": [26, 7], "end": [26, 10]}, 
+		{"clue": "I just got fired from my job at the keyboard factory. They told me I wasn't putting in enough ______", "answer": "SHIFTS", "start": [6, 13], "end": [11, 13]}, 
+		{"clue": "I can't believe I got fired from the calendar factory. All I did was take a ______", "answer": "DAYOFF", "start": [22, 21], "end": [22, 26]}, 
+		{"clue": "I went to the zoo the other day. There was only a dog in it - it was a _______", "answer": "SHIHTZU", "start": [16, 11], "end": [22, 11]}, 
+		{"clue": "What does a baby computer call his father? ____", "answer": "DATA", "start": [18, 1], "end": [21, 1]}, 
+		{"clue": "I only seem to get sick on weekdays. I must have a _______ immune system", "answer": "WEEKEND", "start": [10, 20], "end": [16, 20]}, 
+		{"clue": "I just found out I'm colorblind. The news came out of the ______", "answer": "PURPLE", "start": [17, 21], "end": [17, 26]}, 
+		{"clue": "I hate my job-all I do is crush cans all day. It's ____________", "answer": "SODAPRESSING", "start": [14, 14], "end": [14, 25]}
+		];
+
+        // Define the grid size
+        const ROW_SIZE = Math.max(...clues.map(clue => clue["end"][1])) + 1;
+		const COL_SIZE = Math.max(...clues.map(clue => clue["end"][0])) + 1;
+
+		var cswd = document.querySelector(':root');
+		cswd.style.setProperty('--columns', COL_SIZE);
+		cswd.style.setProperty('--rows', ROW_SIZE);
+		
+		let cursorPosition = new Array(0,0);
+		let startPositions = new Array();
+		
+        // Initialize an empty grid
+        const grid = Array.from({ length: ROW_SIZE }, () => Array(COL_SIZE).fill(''));
+
+        // Function to place a word in the grid
+        function placeWord(word, start, end) {
+            let [startCol, startRow] = start;
+            let [endCol, endRow] = end;
+
+            if (startRow === endRow) { // Horizontal word
+                for (let col = startCol; col <= endCol; col++) {
+                    grid[startRow][col] = word[col - startCol];
+                }
+            } else if (startCol === endCol) { // Vertical word
+                for (let row = startRow; row <= endRow; row++) {
+                    grid[row][startCol] = word[row - startRow];
+                }
+            }
+        }
+
+        // Place each word in the grid
+        clues.forEach(({ answer, start, end }) => {
+			try {
+				placeWord(answer, start, end);
+				startPositions.push(getPositionHash(start));
+			} catch (error) {
+				console.log(answer);
+				console.log(start);
+				console.log(end);
+			}
+        });
+		
+		function getPositionHash(pos) {
+			return (pos[0] < 10 ? "0" + pos[0].toString() : pos[0].toString()) + (pos[1] < 10 ? "0" + pos[1].toString() : pos[1].toString());
+		}
+
+        // Function to render the grid
+        function renderGrid() {
+            const crosswordElement = document.getElementById('crossword');
+            crosswordElement.innerHTML = ''; // Clear any existing content
+
+            for (let row = 0; row < ROW_SIZE; row++) {
+                for (let col = 0; col < COL_SIZE; col++) {
+                    const cellValue = grid[row][col];
+                    const cell = document.createElement('div');
+					if (cellValue) {
+						position = getPositionHash(new Array(col, row));
+						const placeHolder = startPositions.includes(position) ? (startPositions.indexOf(position) + 1).toString() : "";
+						cell.className = 'crossword-cell';
+						cell.innerHTML = `<input type="text"
+						onclick = "updateCursorPosition(${row}, ${col})"
+						placeholder="${placeHolder}" 
+						maxlength="1" value="">`;
+					} else {
+						cell.className = 'crossword-cell empty-cell';
+					}
+					crosswordElement.appendChild(cell);
+                }
+            }
+        }
+		
+		function updateCursorPosition(row, col) {
+			console.log("Clicked at position: (" + row.toString() + ", " + col.toString() + ")");
+			cursorPosition = new Array(row, col);
+		}
+
+        // Function to render clues
+        function renderClues() {
+            const cluesElement = document.getElementById('clues');
+            cluesElement.innerHTML = '<h2>Clues:</h2>';
+
+            clues.forEach(({ clue }, index) => {
+                const clueItem = document.createElement('div');
+                clueItem.textContent = `${index + 1}. ${clue}`;
+                cluesElement.appendChild(clueItem);
+            });
+        }
+		
+		function checkForArrowKeys(e) {
+			console.log(e.code);
+			childIndex = (cursorPosition[0] * COL_SIZE) + cursorPosition[1];
+			const childElements = document.getElementById("crossword").children;
+			
+			if (e.code == 'ArrowDown' && cursorPosition[0] < ROW_SIZE - 1) {
+				updateFocusedInput(e.code, childElements, childIndex);
+			} else if (e.code == 'ArrowUp' && cursorPosition[0] > 0) {
+				updateFocusedInput(e.code, childElements, childIndex);
+			} else if (e.code == 'ArrowRight' && cursorPosition[1] < COL_SIZE - 1) {
+				updateFocusedInput(e.code, childElements, childIndex);
+			} else if (e.code == 'ArrowLeft' && cursorPosition[1] > 0) {
+				updateFocusedInput(e.code, childElements, childIndex);
+			}
+		}
+		
+		function updateFocusedInput(code, childElements, childIndex) {
+			let newPosition = cursorPosition;
+			switch(code) {
+				case "ArrowDown":
+					newPosition = new Array(cursorPosition[0] + 1, cursorPosition[1]);
+					break;
+				case "ArrowUp":
+					newPosition = new Array(cursorPosition[0] - 1, cursorPosition[1]);
+					break;
+				case "ArrowLeft":
+					newPosition = new Array(cursorPosition[0], cursorPosition[1] - 1);
+					break;
+				case "ArrowRight":
+					newPosition = new Array(cursorPosition[0], cursorPosition[1] + 1);
+					break;
+			}
+			newIndex = (newPosition[0] * COL_SIZE) + newPosition[1];
+			if (childElements[newIndex].firstChild !== null ) {
+				childElements[childIndex].firstChild?.blur();
+				childElements[newIndex].firstChild.focus();
+				updateCursorPosition(newPosition[0], newPosition[1]);
+			}
+		}
+		
+		function addEventListeners() {
+			let elementsArray = document.querySelectorAll("input");
+			elementsArray.forEach(function(elem) {
+				elem.addEventListener("keydown", checkForArrowKeys)
+			});
+		}
+
+        // Render the grid and clues
+        renderGrid();
+        renderClues();
+		addEventListeners();
+    </script>
+</body>
+</html>
