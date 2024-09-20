@@ -1,6 +1,5 @@
 import json
-import uuid
-from constants import max_attempts, jokes_file_path
+from constants import max_attempts, jokes_file_path, result_file_path
 from crossword import Crossword
 
 if __name__ == "__main__":
@@ -25,4 +24,5 @@ if __name__ == "__main__":
           "end": [chosen_punchlines[j['answer']].endX - best_crossword.minX, chosen_punchlines[j['answer']].endY - best_crossword.minY]
           } for j in jokes_dict['clues'] if j['answer'] in chosen_punchlines.keys()
     ]
-    json.dump({ "crossword": best_crossword.grid, "clues": chosen_questions}, open("crossword_"+str(uuid.uuid4()) + ".json", 'a'))
+    with open(result_file_path, 'w') as cluesFile:
+        cluesFile.write("const cluesJson = " + json.dumps(chosen_questions) + ";")
