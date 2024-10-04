@@ -25,4 +25,4 @@ if __name__ == "__main__":
           } for j in jokes_dict['clues'] if j['answer'] in chosen_punchlines.keys()
     ]
     with open(result_file_path, 'w') as cluesFile:
-        cluesFile.write("const cluesJson = " + json.dumps(chosen_questions) + ";")
+        cluesFile.write("export const cluesJson = " + '},\n'.join(json.dumps(chosen_questions).split('},')) + ";")
