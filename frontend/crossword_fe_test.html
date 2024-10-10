@@ -1,211 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crossword Puzzle</title>
-    <style>
-		:root {
-			--columns: 20;
-			--rows: 20;
-			--cell-size: 25px;
-		}
-		.crossword-container {
-			background-color: #1ECBE1;
-			display: flex;
-			flex-direction: row;
-			width: 100%;
-			align-items: center;
-			justify-content: space-evenly;
-		}
-        .crossword-grid {
-            display: grid;
-            grid-template-columns: repeat(var(--columns), var(--cell-size)); /* Adjust size based on the grid dimensions */
-            #grid-gap: 1px;
-            margin: 10px 0px;
-			width: auto;
-			#background-color: #2F747D;
-			background-color: #19708C;
-        }
-        .crossword-cell {
-            width: var(--cell-size);
-            height: var(--cell-size);
-			border: 1px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-		.empty-cell {
-			background-color: #19708C;
-		}
-        .crossword-cell input {
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            border: 1px solid #2F747D;
-			border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        .clue-list {
-            margin-top: 20px;
-			width: 50%;
-        }
-		input:focus::placeholder {
-			color: transparent;
-		}
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=0.41">
+	<title>Crossword Puzzle</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<div class="crossword-container">
-		<div id="crossword" class="crossword-grid"></div>
-		<div id="clues" class="clue-list"></div>
+	<div class="loading-container">
+		<div class="loader"></div>
 	</div>
-
-    <script type="text/javascript" src="clues.js"></script>
-    <script>
-		const clues = cluesJson;
-
-        // Define the grid size
-        const ROW_SIZE = Math.max(...clues.map(clue => clue["end"][1])) + 1;
-		const COL_SIZE = Math.max(...clues.map(clue => clue["end"][0])) + 1;
-
-		var cswd = document.querySelector(':root');
-		cswd.style.setProperty('--columns', COL_SIZE);
-		cswd.style.setProperty('--rows', ROW_SIZE);
-		
-		let cursorPosition = new Array(0,0);
-		let startPositions = new Array();
-		
-        // Initialize an empty grid
-        const grid = Array.from({ length: ROW_SIZE }, () => Array(COL_SIZE).fill(''));
-
-        // Function to place a word in the grid
-        function placeWord(word, start, end) {
-            let [startCol, startRow] = start;
-            let [endCol, endRow] = end;
-
-            if (startRow === endRow) { // Horizontal word
-                for (let col = startCol; col <= endCol; col++) {
-                    grid[startRow][col] = word[col - startCol];
-                }
-            } else if (startCol === endCol) { // Vertical word
-                for (let row = startRow; row <= endRow; row++) {
-                    grid[row][startCol] = word[row - startRow];
-                }
-            }
-        }
-
-        // Place each word in the grid
-        clues.forEach(({ answer, start, end }) => {
-			try {
-				placeWord(answer, start, end);
-				startPositions.push(getPositionHash(start));
-			} catch (error) {
-				console.log(answer);
-				console.log(start);
-				console.log(end);
-			}
-        });
-		
-		function getPositionHash(pos) {
-			return (pos[0] < 10 ? "0" + pos[0].toString() : pos[0].toString()) + (pos[1] < 10 ? "0" + pos[1].toString() : pos[1].toString());
-		}
-
-        // Function to render the grid
-        function renderGrid() {
-            const crosswordElement = document.getElementById('crossword');
-            crosswordElement.innerHTML = ''; // Clear any existing content
-
-            for (let row = 0; row < ROW_SIZE; row++) {
-                for (let col = 0; col < COL_SIZE; col++) {
-                    const cellValue = grid[row][col];
-                    const cell = document.createElement('div');
-					if (cellValue) {
-						position = getPositionHash(new Array(col, row));
-						const placeHolder = startPositions.includes(position) ? (startPositions.indexOf(position) + 1).toString() : "";
-						cell.className = 'crossword-cell';
-						cell.innerHTML = `<input type="text"
-						onclick = "updateCursorPosition(${row}, ${col})"
-						placeholder="${placeHolder}" 
-						maxlength="1" value="">`;
-					} else {
-						cell.className = 'crossword-cell empty-cell';
-					}
-					crosswordElement.appendChild(cell);
-                }
-            }
-        }
-		
-		function updateCursorPosition(row, col) {
-			console.log("Clicked at position: (" + row.toString() + ", " + col.toString() + ")");
-			cursorPosition = new Array(row, col);
-		}
-
-        // Function to render clues
-        function renderClues() {
-            const cluesElement = document.getElementById('clues');
-            cluesElement.innerHTML = '<h2>Clues:</h2>';
-
-            clues.forEach(({ clue }, index) => {
-                const clueItem = document.createElement('div');
-                clueItem.textContent = `${index + 1}. ${clue}`;
-                cluesElement.appendChild(clueItem);
-            });
-        }
-		
-		function checkForArrowKeys(e) {
-			console.log(e.code);
-			childIndex = (cursorPosition[0] * COL_SIZE) + cursorPosition[1];
-			const childElements = document.getElementById("crossword").children;
-			
-			if (e.code == 'ArrowDown' && cursorPosition[0] < ROW_SIZE - 1) {
-				updateFocusedInput(e.code, childElements, childIndex);
-			} else if (e.code == 'ArrowUp' && cursorPosition[0] > 0) {
-				updateFocusedInput(e.code, childElements, childIndex);
-			} else if (e.code == 'ArrowRight' && cursorPosition[1] < COL_SIZE - 1) {
-				updateFocusedInput(e.code, childElements, childIndex);
-			} else if (e.code == 'ArrowLeft' && cursorPosition[1] > 0) {
-				updateFocusedInput(e.code, childElements, childIndex);
-			}
-		}
-		
-		function updateFocusedInput(code, childElements, childIndex) {
-			let newPosition = cursorPosition;
-			switch(code) {
-				case "ArrowDown":
-					newPosition = new Array(cursorPosition[0] + 1, cursorPosition[1]);
-					break;
-				case "ArrowUp":
-					newPosition = new Array(cursorPosition[0] - 1, cursorPosition[1]);
-					break;
-				case "ArrowLeft":
-					newPosition = new Array(cursorPosition[0], cursorPosition[1] - 1);
-					break;
-				case "ArrowRight":
-					newPosition = new Array(cursorPosition[0], cursorPosition[1] + 1);
-					break;
-			}
-			newIndex = (newPosition[0] * COL_SIZE) + newPosition[1];
-			if (childElements[newIndex].firstChild !== null ) {
-				childElements[childIndex].firstChild?.blur();
-				childElements[newIndex].firstChild.focus();
-				updateCursorPosition(newPosition[0], newPosition[1]);
-			}
-		}
-		
-		function addEventListeners() {
-			let elementsArray = document.querySelectorAll("input");
-			elementsArray.forEach(function(elem) {
-				elem.addEventListener("keydown", checkForArrowKeys)
-			});
-		}
-
-        // Render the grid and clues
-        renderGrid();
-        renderClues();
-		addEventListeners();
-    </script>
+	<div class="crossword-container" id="app-container">
+		<div class="leftside">
+			<div id="crossword" class="crossword-grid"></div>
+			<div class="button-container">
+				<button class="button-title" id="hint">Hint</button>
+				<button class="button-title" id="confirm">Confirm</button>
+			</div>
+		</div>
+		<div class="clue-container">
+			<div id="across" class="container">
+				<h2>Across</h2>
+				<div id="across-container" class="clue-list"></div>
+			</div>
+			<div id="down" class="container">
+				<h2>Down</h2>
+				<div id="down-container" class="clue-list"></div>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="clues.js"></script>
+	<script type="module" src="crossword-service.js"></script>
 </body>
 </html>
