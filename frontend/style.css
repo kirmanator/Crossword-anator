@@ -1,7 +1,7 @@
 :root {
 	--columns: 20;
 	--rows: 20;
-	--cell-size: 25px;
+	--cell-size: 1.8rem;
 	--loading-size: 80px;
 	--button-color: rgb(3, 157, 221);
 	background-color: #e7eaeb;
@@ -13,12 +13,10 @@
 	flex-direction: row;
 	width: 100%;
 	align-items: top;
-	margin-top: 20px;
+	margin-top: 10px;
 	justify-content: center;
 	height: 100%;
 	z-index: 1;
-	align-items: top;
-	justify-content: space-evenly;
 }
 .crossword-grid {
 	display: grid;
@@ -29,7 +27,7 @@
 	margin-left: 1rem;
 	z-index: 0;
 	background-color: #1ab4f5;
-	border: 5px solid #0aa4e5;
+	border: 0.5rem solid #0aa4e5;
 	border-radius: 7px;
 }
 .crossword-cell {
@@ -106,7 +104,6 @@ input:disabled {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	margin-top: 20px;
 }
 .button-title {
 	font-family: nytkarnak, Georgia;
@@ -161,6 +158,11 @@ button {
 }
 .loader::before	 {
 	box-shadow: calc(var(--loading-size) * 1.25) calc(var(--loading-size) * -1.25);
+}
+@media (max-width: 1000px) {
+  .crossword-container {
+    flex-direction: column;
+  }
 }
 
 @keyframes animloader {

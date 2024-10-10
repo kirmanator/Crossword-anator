@@ -133,6 +133,12 @@ function addEventListeners() {
 	});
 	document.getElementById('app-container').addEventListener('click', removeAllHighlights);
 	document.getElementById('hint').addEventListener('click', hint);
+	document.addEventListener('keydown', (event) => {
+	  if (event.ctrlKey && event.key === 'h') {
+		event.preventDefault(); // Prevent the default browser save action
+		hint();
+	  }
+	});
 }
 
 function confirmCrossword() {
@@ -147,7 +153,7 @@ function hint() {
 	const childElements = document.getElementById("crossword").children;
 	if (childElements[childIndex].firstChild !== null) {
 		childElements[childIndex].firstChild.value = grid[cursorPosition[0]][cursorPosition[1]];
-		childElements[childIndex].firstChild.disabled = true;
+		//childElements[childIndex].firstChild.disabled = true;
 		const matches = grid[cursorPosition[0]][cursorPosition[1]].toLowerCase() === childElements[childIndex].firstChild?.value.toLowerCase();
 		console.log(matches);
 		return matches;
