@@ -1,32 +1,17 @@
 import { cluesJson as clues } from './clues.js';
-import { calculateCellIndex, getPositionHash } from './crossword-util.js';
-import { cursorPosition, checkForArrowKeys, updateCursorPosition } from './cell-navigation-service.js';
+import { calculateCellIndex, getPositionHash, across, down, ROW_SIZE, COL_SIZE, acrossAnswers, downAnswers, hashesToClues, clueIndexToCellIndexes } from './crossword-util.js';
+import { cursorPosition, setCursorPosition, checkForArrowKeys } from './cell-navigation-service.js';
 import { toggleHighlightClues, removeAllHighlights, toggleHighlightCells } from './highlight-service.js';
-
-// Define the grid size
-const ROW_SIZE = Math.max(...clues.map(clue => clue["end"][1])) + 1;
-const COL_SIZE = Math.max(...clues.map(clue => clue["end"][0])) + 1;
 
 var cswd = document.querySelector(':root');
 cswd.style.setProperty('--columns', COL_SIZE);
 cswd.style.setProperty('--rows', ROW_SIZE);
 
-//let cursorPosition = new Array(0,0);
 let acrossPositions = new Array();
 let downPositions = new Array();
 
 // Initialize an empty grid
 const grid = Array.from({ length: ROW_SIZE }, () => Array(COL_SIZE).fill(''));
-const across = clues.filter(clue => clue['start'][1] === clue['end'][1]);
-const down = clues.filter(clue => clue['start'][0] === clue['end'][0]);
-// hashesToClues -> { '0000': 'word1', '0001': 'word1', ... '3729': 'word40' ... }
-const hashesToClues = {};
-// clueIndexToCellIndexes -> { 'across': { 0: [0, 1, 2, ...], 1: [35, 66, 97, ...] ... }, 'down': {...} }
-const clueIndexToCellIndexes = {};
-const acrossAnswers = across.map(clue => clue['answer']);
-const downAnswers = down.map(clue => clue['answer']);
-console.log('Across: ' + acrossAnswers);
-console.log('Down: ' + downAnswers);
 
 function placeWord(word, start, end) {
 	let [startCol, startRow] = start;
@@ -50,24 +35,27 @@ function placeWord(word, start, end) {
 	if (orientation === 'across') {
 		for (let col = startCol; col <= endCol; col++) {
 			grid[startRow][col] = word[col - startCol];
-			populateMaps(word, new Array(startRow, col), orientation, clueIndex, hashesToClues);
+			populateMaps(word, new Array(startRow, col), orientation, clueIndex);
 		}
 	} else {
 		for (let row = startRow; row <= endRow; row++) {
 			grid[row][startCol] = word[row - startRow];
-			populateMaps(word, new Array(row, startCol), orientation, clueIndex, hashesToClues);
+			populateMaps(word, new Array(row, startCol), orientation, clueIndex);
 		}
 	}
 }
 
 function populateMaps(word, pos, orientation, clueIndex) {
 	const posHash = getPositionHash(pos);
-	hashesToClues[posHash] = word;
+	if (!(posHash in hashesToClues)) {
+		hashesToClues[posHash] = new Array();
+	}
+	hashesToClues[posHash].push(word);
 	if (clueIndex in clueIndexToCellIndexes[orientation]) {
-		clueIndexToCellIndexes[orientation][clueIndex].push(calculateCellIndex(pos));
+		clueIndexToCellIndexes[orientation][clueIndex].push(calculateCellIndex(pos, COL_SIZE));
 	} else {
 		clueIndexToCellIndexes[orientation][clueIndex] = new Array();
-		clueIndexToCellIndexes[orientation][clueIndex].push(calculateCellIndex(pos));
+		clueIndexToCellIndexes[orientation][clueIndex].push(calculateCellIndex(pos, COL_SIZE));
 	}
 }
 
@@ -97,10 +85,11 @@ function renderGrid() {
 				input.setAttribute("value", "");
 				input.addEventListener('click', e => {
 					removeAllHighlights();
-					updateCursorPosition(row, col);
+					setCursorPosition(row, col);
+					toggleHighlightClues(cursorPosition);
 					e.stopPropagation();
 				});
-				input.addEventListener('onfocusout', () => toggleHighlightClues(new Array(row, col), hashesToClues, acrossAnswers, downAnswers));
+				//input.addEventListener('onfocusout', () => toggleHighlightClues(new Array(row, col)));
 				cell.appendChild(input);
 			} else {
 				cell.className = 'crossword-cell empty-cell';
@@ -119,7 +108,7 @@ function renderClues() {
 		clueItem.className = 'clue';
 		clueItem.textContent = `${index + 1}. ${clue}`;
 		clueItem.addEventListener('click', e => { 
-			toggleHighlightCells('across', index, clueIndexToCellIndexes);
+			toggleHighlightCells('across', index);
 			e.stopPropagation();
 		});
 		acrossContainer.appendChild(clueItem);
@@ -130,7 +119,7 @@ function renderClues() {
 		clueItem.className = 'clue';
 		clueItem.textContent = `${index + 1}. ${clue}`;
 		clueItem.addEventListener('click', e => { 
-			toggleHighlightCells('down', index, clueIndexToCellIndexes);
+			toggleHighlightCells('down', index);
 			e.stopPropagation();
 		});
 		downContainer.appendChild(clueItem);
@@ -143,6 +132,27 @@ function addEventListeners() {
 		elem.addEventListener("keydown", e => checkForArrowKeys(e, ROW_SIZE, COL_SIZE));
 	});
 	document.getElementById('app-container').addEventListener('click', removeAllHighlights);
+	document.getElementById('hint').addEventListener('click', hint);
+}
+
+function confirmCrossword() {
+	
+}
+
+function hint() {
+	// hint for current position
+	// check if letter in current input matches the one in the grid
+	
+	const childIndex = calculateCellIndex(cursorPosition, COL_SIZE);
+	const childElements = document.getElementById("crossword").children;
+	if (childElements[childIndex].firstChild !== null) {
+		childElements[childIndex].firstChild.value = grid[cursorPosition[0]][cursorPosition[1]];
+		childElements[childIndex].firstChild.disabled = true;
+		const matches = grid[cursorPosition[0]][cursorPosition[1]].toLowerCase() === childElements[childIndex].firstChild?.value.toLowerCase();
+		console.log(matches);
+		return matches;
+	}
+	return false;
 }
 
 clues.forEach(({ answer, start, end }) => {

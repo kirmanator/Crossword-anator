@@ -1,27 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crossword Puzzle</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Crossword Puzzle</title>
 	<link rel="stylesheet" href="style.css">
 </head>
-	<body>
-		<div class="crossword-container" id="app-container">
+<body>
+	<div class="loading-container">
+		<div class="loader"></div>
+	</div>
+	<div class="crossword-container" id="app-container">
+		<div class="leftside">
 			<div id="crossword" class="crossword-grid"></div>
-			<div class="clue-container">
-				<div id="across" class="container">
-					<h2>Across</h2>
-					<div id="across-container" class="clue-list"></div>
-				</div>
-				<div id="down" class="container">
-					<h2>Down</h2>
-					<div id="down-container" class="clue-list"></div>
-				</div>
+			<div class="button-container">
+				<button class="button-title" id="hint">Hint</button>
+				<button class="button-title" id="confirm">Confirm</button>
 			</div>
 		</div>
-
-		<script type="module" src="clues.js"></script>
-		<script type="module" src="crossword-service.js"></script>
-	</body>
+		<div class="clue-container">
+			<div id="across" class="container">
+				<h2>Across</h2>
+				<div id="across-container" class="clue-list"></div>
+			</div>
+			<div id="down" class="container">
+				<h2>Down</h2>
+				<div id="down-container" class="clue-list"></div>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="clues.js"></script>
+	<script type="module" src="crossword-service.js"></script>
+</body>
 </html>
