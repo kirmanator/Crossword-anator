@@ -4,18 +4,19 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=0.41">
 	<title>Crossword Puzzle</title>
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
 	<div class="loading-container">
 		<div class="loader"></div>
 	</div>
-	<div class="crossword-container" id="app-container">
-		<div class="leftside">
+	<div class="app-container" id="app-container">
+		<div class="crossword-container">
 			<div id="crossword" class="crossword-grid"></div>
 			<div class="button-container">
 				<button class="button-title" id="hint">Hint</button>
-				<button class="button-title" id="confirm">Confirm</button>
+				<button class="button-title" id="confirm">Check</button>
 			</div>
 		</div>
 		<div class="clue-container">
@@ -29,7 +30,7 @@
 			</div>
 		</div>
 	</div>
-	<script type="module" src="clues.js"></script>
-	<script type="module" src="crossword-service.js"></script>
+	<script type="module" src="./clues.js"></script>
+	<script type="module" src="./crossword-service.js"></script>
 </body>
 </html>

@@ -238,6 +238,14 @@
   { "index": 60, 
     "original": "I hate my job-all I do is crush cans all day. It's soda pressing",
     "clue": "I hate my job-all I do is crush cans all day. It's ____________",
-    "answer": "SODAPRESSING"}
+    "answer": "SODAPRESSING"},
+  { "index": 61,
+    "original": "Papa tomato, Mama tomato and baby tomato are walking down the street. Baby tomato starts lagging behind and papa tomato gets really angry, goes back and says ketchup",
+    "clue": "Papa tomato, Mama tomato and baby tomato are walking down the street. Baby tomato starts lagging behind and papa tomato gets really angry, goes back and says _______",
+    "answer": "KETCHUP"},
+  { "index": 62,
+    "original": "Why was Cinderella so bad at soccer? She kept running away from the ball",
+    "clue": "Why was Cinderella so bad at soccer? She kept running away from the ____",
+    "answer": "BALL"}
 ]
 }

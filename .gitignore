@@ -1,1 +1,3 @@
 generator/crosswordpy/.idea/*
+frontend/node_modules/
+*.pyc

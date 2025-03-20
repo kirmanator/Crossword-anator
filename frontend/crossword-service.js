@@ -1,4 +1,4 @@
-import { cluesJson as clues } from './clues.js';
+import { cluesJson } from './clues.js';
 import { calculateCellIndex, getPositionHash, across, down, ROW_SIZE, COL_SIZE, acrossAnswers, downAnswers, hashesToClues, clueIndexToCellIndexes } from './crossword-util.js';
 import { cursorPosition, setCursorPosition, checkForArrowKeys } from './cell-navigation-service.js';
 import { toggleHighlightClues, removeAllHighlights, toggleHighlightCells } from './highlight-service.js';
@@ -161,7 +161,7 @@ function hint() {
 	return false;
 }
 
-clues.forEach(({ answer, start, end }) => {
+cluesJson.forEach(({ answer, start, end }) => {
 	try {
 		placeWord(answer, start, end);
 	} catch (error) {

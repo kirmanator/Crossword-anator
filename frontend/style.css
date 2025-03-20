@@ -5,23 +5,26 @@
 	--loading-size: 80px;
 	--button-color: rgb(3, 157, 221);
 	background-color: #e7eaeb;
-	
 }
-.crossword-container {
+html, body {
+	overflow: auto;
+}
+.app-container {
 	background-color: #e7eaeb;
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-	align-items: top;
+	align-items: flex-start;
 	margin-top: 10px;
 	justify-content: center;
 	height: 100%;
 	z-index: 1;
+	animation: animloader 2s ease;
 }
 .crossword-grid {
 	display: grid;
 	grid-template-columns: repeat(var(--columns), var(--cell-size)); /* Adjust size based on the grid dimensions */
-	margin: 10px 0px;
+	margin: 10px 0px 0px;
 	width: auto;
 	height: 100%;
 	margin-left: 1rem;
@@ -89,33 +92,39 @@ input:focus::placeholder {
         color: transparent;
 }
 input:disabled {
-	#background-color: #1dd552;
+	/* background-color: #1dd552; */
 	background-color: #8ff8ae;
 }
-.leftside {
+.crossword-container {
 	width: auto;
 	height:100%;
 	display:flex;
 	flex-direction: column;
 }
 .button-container {
-	width: 100%;
+	width: calc(100% - 1rem);
+	margin-left: 1rem;
 	height: auto;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	background-color: #c6c6c6;
 }
 .button-title {
 	font-family: nytkarnak, Georgia;
 	font-size: 20px;
+	padding: 1rem;
 }
 button {
-	margin: 10px;
-	height: 40px;
 	border: none;
 	border-radius: 4px;
-	background-color: var(--button-color);
+	background-color: inherit;
 	color: white;
+	margin: 0rem 1rem;
+}
+button:hover {
+	background-color: #d7dadb;
+	cursor: pointer;
 }
 .loading-container {
 	width: 100%;
@@ -123,13 +132,15 @@ button {
 	position: absolute;
 	z-index: 2;
 	background-color: #e7eaeb;
-	display: none;
 	justify-content: center;
 	align-items: center;
+	animation: fadeout 3s ease 1;
+	animation-fill-mode: forwards;
 }
 .loader {
   width: var(--loading-size);
   height: var(--loading-size);
+  /* box-shadow: calc(var(--loading-size) * 1.25); */
   box-shadow: 0;
   border-radius: 4px;
   background: currentColor;
@@ -137,7 +148,6 @@ button {
   position: relative;
   color: #FFF;
   box-sizing: border-box;
-  animation: animloader 2s ease infinite;
 }
 .loader::before,
 .loader::after {
@@ -159,9 +169,35 @@ button {
 .loader::before	 {
 	box-shadow: calc(var(--loading-size) * 1.25) calc(var(--loading-size) * -1.25);
 }
-@media (max-width: 1000px) {
-  .crossword-container {
+
+/* Works on Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: blue orange;
+}*/
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #c6c6c6;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #0aa4e5;
+  border-radius: 20px;
+}
+
+@media (max-width: 1100px) {
+  .app-container {
     flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+  }
+  .body {
+	  overflow: scroll;
   }
 }
 
@@ -187,4 +223,18 @@ button {
 		color: rgba(26, 180, 245, 0);
 	}
 }
-    
+
+@keyframes fadeout {
+	0% {
+		opacity: 1;
+		display: flex;
+	}
+	80% {
+		opacity: 1;
+		display: flex;
+	}
+	100% {
+		opacity: 0;
+		display: none;
+	}
+}    
